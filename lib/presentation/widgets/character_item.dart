@@ -6,7 +6,7 @@ import '../../data/models/character_model.dart';
 class CharacterItem extends StatelessWidget {
   final CharacterModel character;
 
-  CharacterItem(this.character, {Key? key}) : super(key: key);
+  CharacterItem({Key? key, required this.character}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,6 @@ class CharacterItem extends StatelessWidget {
                   height: double.infinity,
                   placeholder: "assets/images/loading.gif",
                   image: character.imageUrl,
-
                   fit: BoxFit.cover,
                 )
               : Image.asset("assets/images/placeholder.png"),

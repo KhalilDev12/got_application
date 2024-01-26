@@ -19,12 +19,15 @@ class _CharactersScreenState extends State<CharactersScreen> {
   List<CharacterModel>? allCharacters;
   late double deviceHeight, deviceWidth;
 
+  List<CharacterModel>? searchedCharacters;
+  bool _isSearching = false;
+  final searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    // Get All Characters from BLoC
-    allCharacters =
-        BlocProvider.of<CharactersCubit>(context).getAllCharacters();
+    // Wake up the BLoC
+    BlocProvider.of<CharactersCubit>(context).getAllCharacters();
   }
 
   @override
@@ -37,15 +40,100 @@ class _CharactersScreenState extends State<CharactersScreen> {
     deviceHeight = MediaQuery.of(context).size.height;
     deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.appYellow,
-        title: const Text(
-          "Characters",
-          style: TextStyle(color: AppColors.appGrey),
-        ),
-      ),
+      appBar: _buildAppBar(),
       body: buildBlocWidget(),
     );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: AppColors.appYellow,
+      title: _isSearching
+          ? _buildSearchField()
+          : const Text("Characters",
+              style: TextStyle(color: AppColors.appGrey)),
+      actions: buildAppBarActions(),
+    );
+  }
+
+  Widget _buildSearchField() {
+    return TextField(
+      controller: searchController,
+      cursorColor: AppColors.appGrey,
+      style: const TextStyle(
+        color: AppColors.appGrey,
+      ),
+      decoration: const InputDecoration(
+        hintText: "Find a character",
+        border: InputBorder.none,
+        hintStyle: TextStyle(
+          color: AppColors.appGrey,
+          fontSize: 18,
+        ),
+      ),
+      onChanged: (value) {
+        addSearchedForItemsToSearchedList(value);
+      },
+    );
+  }
+
+  void addSearchedForItemsToSearchedList(String value) {
+    searchedCharacters = allCharacters!
+        .where(
+          (character) => character.fullName.toLowerCase().contains(value),
+        )
+        .toList();
+    setState(() {});
+  }
+
+  List<Widget> buildAppBarActions() {
+    if (_isSearching) {
+      return [
+        IconButton(
+          onPressed: () {
+            _clearSearch();
+          },
+          icon: const Icon(
+            Icons.clear,
+            color: AppColors.appGrey,
+          ),
+        )
+      ];
+    } else {
+      return [
+        IconButton(
+          onPressed: () {
+            _startSearching();
+          },
+          icon: const Icon(
+            Icons.search,
+            color: AppColors.appGrey,
+          ),
+        )
+      ];
+    }
+  }
+
+  void _startSearching() {
+    ModalRoute.of(context)!.addLocalHistoryEntry(
+      LocalHistoryEntry(onRemove: _stopSearching),
+    );
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+  void _stopSearching() {
+    _clearSearch;
+    setState(() {
+      _isSearching = false;
+    });
+  }
+
+  void _clearSearch() {
+    setState(() {
+      searchController.clear();
+    });
   }
 
   Widget buildBlocWidget() {
@@ -74,16 +162,22 @@ class _CharactersScreenState extends State<CharactersScreen> {
 
   Widget buildCharactersList() {
     return GridView.builder(
-      itemCount: allCharacters!.length,
+      itemCount: searchController.text.isEmpty
+          ? allCharacters!.length
+          : searchedCharacters!.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 2/3,
+          childAspectRatio: 2 / 3,
           crossAxisSpacing: 5,
           mainAxisSpacing: 5),
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       itemBuilder: (context, index) {
-        return CharacterItem(allCharacters![index]);
+        return CharacterItem(
+          character: searchController.text.isEmpty
+              ? allCharacters![index]
+              : searchedCharacters![index],
+        );
       },
     );
   }
