@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:got_application/business_logic/cubit/characters_cubit.dart';
+import 'package:got_application/data/models/character_model.dart';
 import 'package:got_application/data/repository/characters_repository.dart';
 import 'package:got_application/data/web_services/characters_web_service.dart';
 import 'package:got_application/presentation/screens/character_details_screen.dart';
@@ -28,9 +29,12 @@ class AppRoutes {
           ),
         );
       case characterDetailsScreen:
+        final character = settings.arguments
+            as CharacterModel; // the character that is passed to this screen
         return MaterialPageRoute(
-          builder: (context) => CharacterDetailsScreen(),
-        );
+            builder: (context) => CharacterDetailsScreen(
+                  selectedCharacter: character,
+                ));
     }
   }
 }

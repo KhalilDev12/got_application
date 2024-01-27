@@ -2,6 +2,17 @@
 
 Game Of Thrones Flutter project.
 
+Used BLoC as A state Management, and used Dio package for fetching data from API
+Architecture of this app contains :
+
+- Presentation Folder : Screens & Widgets
+- Data Folder : Models , Repository & Web services
+- Business Logic Folder : BLoC or Cubit
+- Constants Folder : files for const Variables like: Strings & colors
+
+In each Item at Characters Screen we used Hero widget for animate the screen
+when we go to details character Screen (Hero Widget requires Tag attribute : charID in this case)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

@@ -1,4 +1,4 @@
 final baseUrl = "https://thronesapi.com/api/v2/";
 
 const charactersScreen = "/";
-const characterDetailsScreen = "/character_details";
+const characterDetailsScreen = "/character_details_screen";
