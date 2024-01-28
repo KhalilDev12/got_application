@@ -10,8 +10,13 @@ Architecture of this app contains :
 - Business Logic Folder : BLoC or Cubit
 - Constants Folder : files for const Variables like: Strings & colors
 
+In Characters Screen you can search for a specific character by name.
+
 In each Item at Characters Screen we used Hero widget for animate the screen
 when we go to details character Screen (Hero Widget requires Tag attribute : charID in this case)
+
+Use flutter_offline Package for Handling connectivity status in Characters Screen
+(if there is network show Characters if not show no connection state)
 
 ## Getting Started
 

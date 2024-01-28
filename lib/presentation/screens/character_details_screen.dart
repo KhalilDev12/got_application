@@ -61,7 +61,7 @@ class _CharacterDetailsScreenState extends State<CharacterDetailsScreen> {
                   ),
                 ),
                 // Use this SizedBox so you can scroll the screen to hide the picture
-                const SizedBox(height: 500),
+                const SizedBox(height: 800),
               ],
             ),
           ),

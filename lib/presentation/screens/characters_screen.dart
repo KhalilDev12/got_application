@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 import 'package:got_application/business_logic/cubit/characters_cubit.dart';
 import 'package:got_application/constants/app_colors.dart';
 import 'package:got_application/presentation/widgets/character_item.dart';
@@ -41,7 +42,40 @@ class _CharactersScreenState extends State<CharactersScreen> {
     deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: _buildAppBar(),
-      body: buildBlocWidget(),
+      body: OfflineBuilder(
+        child: _buildProgressIndicator(),
+        connectivityBuilder: (context, connectivity, child) {
+          final bool connected = connectivity != ConnectivityResult.none;
+          if (connected) {
+            // There is Connection so Build your widgets
+            return buildBlocWidget();
+          } else {
+            // There is no Connection so Build No Connection Widget
+            return buildNoConnectionWidget();
+          }
+        },
+      ),
+    );
+  }
+
+  Widget buildNoConnectionWidget() {
+    return Center(
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "Can't  Connect  ..  Check Internet",
+              style: TextStyle(
+                color: AppColors.appGrey,
+                fontSize: 20,
+              ),
+            ),
+            Image.asset("assets/images/no_connection.png"),
+          ],
+        ),
+      ),
     );
   }
 
@@ -143,11 +177,15 @@ class _CharactersScreenState extends State<CharactersScreen> {
           allCharacters = (state).characters;
           return buildLoadedList();
         } else {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.appYellow),
-          );
+          return _buildProgressIndicator();
         }
       },
+    );
+  }
+
+  Center _buildProgressIndicator() {
+    return const Center(
+      child: CircularProgressIndicator(color: AppColors.appYellow),
     );
   }
 
